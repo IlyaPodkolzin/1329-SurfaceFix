@@ -20,6 +20,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Thread gameThread = null;
     private Player player;
     private Friend friend;
+    private Enemy enemy;
 
     private Paint paint;
     private Canvas canvas;
@@ -59,6 +60,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         // добавляем новый объект - Friend
         friend = new Friend(context, screenX, screenY);
+        enemy = new Enemy(context, screenX, screenY);
 
         this.screenX = screenX;
         countMisses = 0;
@@ -143,6 +145,12 @@ public class GameView extends SurfaceView implements Runnable {
                     friend.getY(),
                     paint);
 
+            canvas.drawBitmap(
+                    enemy.getBitmap(),
+                    enemy.getX(),
+                    enemy.getY(),
+                    paint);
+
             if(isGameOver){
                 paint.setTextSize(150);
                 paint.setTextAlign(Paint.Align.CENTER);
@@ -165,9 +173,10 @@ public class GameView extends SurfaceView implements Runnable {
         score++;
 
         player.update();
-
         // обновление у Friend
-        friend.update(player.getSpeed());
+        friend.update(player.getSpeed() * 3);
+        enemy.update();
+        isGameOver = enemy.intersected(player);
 
         for (Star s : stars) {
             s.update(player.getSpeed());
